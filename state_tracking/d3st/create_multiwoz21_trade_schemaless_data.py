@@ -101,7 +101,7 @@ def create_schemaless_data(json_data: Json, schema_info: SchemaInfo,
         letter = letters[possible_values_shuffled.index(value_nospaces)]
       else:
         # Give up and return unknown as the value.
-        tf.logging.warning('Value "%s" not in possible values %s', value,
+        print('Value "%s" not in possible values %s', value,
                            possible_values_shuffled)
         return 'unknown'
     else:

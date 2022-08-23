@@ -23,8 +23,6 @@ import json
 import os
 from typing import Dict, List, Set
 
-import tensorflow as tf
-
 # Use OrderedDict for JSON to preserve field order.
 Json = collections.OrderedDict
 
@@ -84,33 +82,33 @@ def load_data(data_path: str,
   """
   # Load dialogue data.
   if is_trade:
-    with tf.io.gfile.GFile(os.path.join(data_path, 'train_dials.json')) as f:
+    with open(os.path.join(data_path, 'train_dials.json')) as f:
       train_json = Json()
       for d in json.loads(f.read().lower(), object_pairs_hook=Json):
         train_json[d['dialogue_idx']] = d
 
-    with tf.io.gfile.GFile(os.path.join(data_path, 'dev_dials.json')) as f:
+    with open(os.path.join(data_path, 'dev_dials.json')) as f:
       dev_json = Json()
       for d in json.loads(f.read().lower(), object_pairs_hook=Json):
         dev_json[d['dialogue_idx']] = d
 
-    with tf.io.gfile.GFile(os.path.join(data_path, 'test_dials.json')) as f:
+    with open(os.path.join(data_path, 'test_dials.json')) as f:
       test_json = Json()
       for d in json.loads(f.read().lower(), object_pairs_hook=Json):
         test_json[d['dialogue_idx']] = d
 
   else:
-    with tf.io.gfile.GFile(os.path.join(data_path, 'data.json')) as f:
+    with open(os.path.join(data_path, 'data.json')) as f:
       # Load using collections.OrderedDict to keep order the same as JSON.
       json_data = json.loads(f.read().lower(), object_pairs_hook=Json)
 
     # Different MultiWOZ versions have different (val|test)ListFile extensions
     # but both can be parsed as a text file containing a list of dialog ids.
     extension = 'json' if multiwoz_version == '2.4' else 'txt'
-    with tf.io.gfile.GFile(os.path.join(data_path,
+    with open(os.path.join(data_path,
                                         f'valListFile.{extension}')) as f:
       dev_ids = {line.lower().rstrip() for line in f}
-    with tf.io.gfile.GFile(
+    with open(
         os.path.join(data_path, f'testListFile.{extension}')) as f:
       test_ids = {line.lower().rstrip() for line in f}
 
@@ -125,8 +123,7 @@ def load_data(data_path: str,
 
   # Load slot descriptions. Note that 2.4 doesn't come with a
   # slot_descriptions.json file. Copy the 2.1 file to avoid an error
-  with tf.io.gfile.GFile(os.path.join(data_path,
-                                      'slot_descriptions.json')) as f:
+  with open(os.path.join(data_path, 'slot_descriptions.json')) as f:
     slot_descriptions_raw = json.loads(f.read().lower(), object_pairs_hook=Json)
     slot_descriptions = {}
     for key, val in slot_descriptions_raw.items():
@@ -145,7 +142,7 @@ def load_data(data_path: str,
 
 def load_schema(schema_path: str) -> SchemaInfo:
   """Load information from MultiWOZ schema file."""
-  with tf.io.gfile.GFile(schema_path) as f:
+  with open(schema_path) as f:
     schema_json = json.loads(f.read().lower(), object_pairs_hook=Json)
 
   slots_by_domain = {}
