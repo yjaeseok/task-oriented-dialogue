@@ -22,7 +22,6 @@ import dataclasses
 import json
 import os
 from typing import Dict, List, Set
-from config import g_config as cfg
 
 # Use OrderedDict for JSON to preserve field order.
 Json = collections.OrderedDict
@@ -141,16 +140,16 @@ def load_data(data_path: str,
     return MultiwozData(train_json, dev_json, test_json, slot_descriptions)
 
 
-def load_data_for_dstc() -> MultiwozData:
-    with open(os.path.join(cfg.d3st.path, cfg.d3st.train_data)) as f:
+def load_data_for_dstc(train_path, dev_path, slot_path) -> MultiwozData:
+    with open(train_path) as f:
         train_json = json.loads(f.read().lower(), object_pairs_hook=Json)
 
-    with open(os.path.join(cfg.d3st.path, cfg.d3st.dev_data)) as f:
+    with open(dev_path) as f:
         dev_json = json.loads(f.read().lower(), object_pairs_hook=Json)
 
     # TODO : test_json
 
-    with open(os.path.join(cfg.d3st.path, cfg.d3st.slot_description_data)) as f:
+    with open(slot_path) as f:
         slot_descriptions_raw = json.loads(f.read().lower(), object_pairs_hook=Json)
         slot_descriptions = {}
         for key, val in slot_descriptions_raw.items():
@@ -196,9 +195,9 @@ def load_schema(schema_path: str) -> SchemaInfo:
     return SchemaInfo(slots_by_domain)
 
 
-def load_schema_for_dstc() -> SchemaInfo:
+def load_schema_for_dstc(schemaless_path) -> SchemaInfo:
     """Load information from MultiWOZ schema file."""
-    with open(os.path.join(cfg.d3st.path, cfg.d3st.schemaless_data)) as f:
+    with open(schemaless_path) as f:
         schema_json = json.loads(f.read().lower(), object_pairs_hook=Json)
 
     slots_by_domain = {}
